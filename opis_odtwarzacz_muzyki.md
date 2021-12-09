@@ -15,7 +15,20 @@ Niezależnie od wybranego trybu, użytkownik może:
  W trybie streamingu użytkownik dodatkowo może:
   - zalogować się do streamingu za pomocą istniejącego konta
   - przeszukiwać bibliotekę streamingu i odtwarzać pojedyncze utwory
-  
+
+Opłata za słuchanie muzyki:
+  - Zakładamy, że dla każdego utworu koszt jego odtworzenia będzie wartością losową z zakresu od 10 gr do 4,00zł ( koszt wyznaczany z dokładnością do 1 grosza). 
+  - Przy czym im utwór "nowszy" tym koszt odtworzenia większy - można użyć metody random.triangular.
+  - Utwory ładowane z dysku mają koszt równy 50% kosztu podstawowego.
+  - Ponowne odtworzenie utworu w ramach tej samej playlisty - koszt zmniejszony o 25% kosztu początkowego.
+  - Opłata jest naliczana w momencie rozpoczęcia odtwarzania utworu.
+  - Jeżeli playlista została przerwana naliczana jest tylko opłata za utwory, które się zakończyły i ostatnio rozpoczęty. Za utwory nieodsłuchane opłata stała wyniesie 10% ich wartości.
+  - Płatność za odsłuchanie monetami 10gr, 20gr, 50gr, 1zł, 2zł, 5zł.
+  - Odtwarzacz zwraca resztę przy użyciu monet 1gr, 2gr, 5gr, 10gr, 20gr, 50gr, 1zł, 2zł, 5zł
+ 
+Istnieje możliwość odsłuchania muzyki w dwóch wariantach:
+  - przedpłata - najpierw wpłacamy pieniądze - tworzymy playlistę do limitu wynikającego z przedpłaty
+  - kredyt - tworzymy playlistę - płacimy potem
 
 ### Metodologia
 Całość projektu jest zaimplementowania w duchu Clean Architecture, z wykorzystaniem DDD (Domain Driven Design). Reguły biznesowe aplikacji znajdują się w centrum grafu zależności, definiują pozostałe warstwy (porty, adaptery).
@@ -42,4 +55,9 @@ Całość projektu jest zaimplementowania w duchu Clean Architecture, z wykorzys
 	 - odtwarzany utwór - autor, tytuł długość, głośność, długość
 	 - playlista
 	 - przyciski do sterowania odtwarzaczem
-
+ 6. Opłata za słuchanie muzyki
+  	 - poprawnie przeliczanie kosztu odtwarzania piosenek
+  	 	- przedpłata - odejmowanie wartości piosenek od opłaconej kwoty
+  	 	- kredyt - naliczanie kredytu za każdym odtworzeniem
+  	 - wydawanie reszty po zakończeniu słuchania 
+  	 - przerwanie słuchania muzyki w trakcie odtwarzania - przeliczenie kosztówn według wymagań
