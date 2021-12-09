@@ -33,6 +33,9 @@ Istnieje możliwość odsłuchania muzyki w dwóch wariantach:
 ### Metodologia
 Całość projektu jest zaimplementowania w duchu Clean Architecture, z wykorzystaniem DDD (Domain Driven Design). Reguły biznesowe aplikacji znajdują się w centrum grafu zależności, definiują pozostałe warstwy (porty, adaptery).
 
+### Repozytorium
+https://github.com/kaspermroz/music-player-python
+
 ## Testy
  1.  Wyszukiwanie plików w systemie po danej ścieżce
 	  - znalezione testowe pliki .mp3
