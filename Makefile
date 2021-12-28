@@ -2,7 +2,7 @@ reqs:
 	pip3 install -r requirements.txt
 
 lint:
-	pylint src
+	pylint --rcfile=.pylintrc src
 
 run:
-	python3 src/main.py
+	python3 main.py

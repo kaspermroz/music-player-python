@@ -1,9 +1,9 @@
-from typing import List
+from typing import List, Type
 
-from internal.app.commands.say_hi import SayHiHandler
-from internal.app.command_handler import CommandHandler
+from src.internal.app.commands.say_hi import SayHiHandler
+from src.internal.app.interfaces.command_handler import CommandHandler
 
 
-Handlers: List[CommandHandler] = [
+Handlers: List[Type[CommandHandler]] = [
     SayHiHandler
 ]

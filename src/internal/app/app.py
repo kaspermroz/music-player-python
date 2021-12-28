@@ -1,7 +1,19 @@
-from typing import List
-from internal.app.commands.handlers import CommandHandler
+from typing import List, Type
+
+from src.internal.app.interfaces.command_handler import CommandHandler
+from src.internal.app.interfaces.configuration import Configuration
+
 
 class Application:
-    def __init__(self, commands: List[CommandHandler]) -> None:
+    SayHi = CommandHandler()
+    Config = Configuration()
+
+    def __init__(
+            self,
+            configuration: Type[Configuration],
+            commands: List[Type[CommandHandler]],
+    ) -> None:
+        self.Config = configuration
         for c in commands:
-            setattr(self, c.HandlerName(self), c())
+            handler = c()
+            setattr(self, handler.HandlerName(), handler)

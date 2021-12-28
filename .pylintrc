@@ -2,4 +2,10 @@
 
 disable=import-error,
     invalid-name,
-    no-member
+    no-member,
+    missing-function-docstring,
+    missing-module-docstring,
+    missing-class-docstring,
+    too-few-public-methods,
+    no-name-in-module,
+    no-self-use,
