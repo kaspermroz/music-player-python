@@ -3,3 +3,6 @@ reqs:
 
 lint:
 	pylint src
+
+run:
+	python3 src/main.py
