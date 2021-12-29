@@ -10,7 +10,7 @@ class Application:
 
     def __init__(
             self,
-            configuration: Type[Configuration],
+            configuration: Configuration,
             commands: List[Type[CommandHandler]],
     ) -> None:
         self.Config = configuration
