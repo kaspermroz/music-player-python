@@ -1,6 +1,6 @@
 from decimal import Decimal, getcontext
 
-from currency import Currency
+from src.internal.domain.currency import Currency
 
 
 class Money:

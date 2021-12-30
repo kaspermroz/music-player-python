@@ -1,6 +1,8 @@
-"""Configuration interface for the service"""
+from abc import ABC
 
 
-class Configuration:
+class Configuration(ABC):
+    """Configuration interface for the service"""
+
     def PlayerSize(self):
         return NotImplementedError

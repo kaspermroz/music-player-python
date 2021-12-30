@@ -1,9 +1,11 @@
-"""
-CommandHandler is an abstract class which enforces command interface
-"""
+from abc import ABC
 
 
-class CommandHandler:
+class CommandHandler(ABC):
+    """
+    CommandHandler is an abstract class which enforces command interface
+    """
+
     def HandlerName(self) -> str:
         return ""
 

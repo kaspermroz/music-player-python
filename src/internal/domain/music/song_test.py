@@ -9,5 +9,3 @@ def test_song_length():
     sl2 = SongLength(70)
     assert sl2.Seconds() == 70
     assert sl2.String() == "01:10"
-
-
