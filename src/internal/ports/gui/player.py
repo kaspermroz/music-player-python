@@ -1,23 +1,33 @@
+from typing import List, Dict
 import PySimpleGUI as sg
 
 from src.internal.app.app import Application
-
-
-EVENT_HI = "Hi"
-
-KEY_HI = "-HI-"
+from src.internal.ports.gui.event_handler import EventHandler
+from src.internal.ports.gui.events import EVENT_BROWSE_FILES
 
 
 class PlayerGUI:
-    def __init__(self, application: Application):
+    handlers: Dict[str, EventHandler]
+
+    def __init__(self, application: Application, event_handlers: List[EventHandler]):
+        sg.theme("DarkTeal2")
         layout = [
-            [sg.Text("Say hi")],
-            [sg.Text(size=(40, 1), key=KEY_HI)],
-            [sg.Button('Hi')],
+            [sg.Text("Load songs from disk")],
+            [sg.FilesBrowse(
+                file_types=(("MP3 files", "*.mp3"),),
+                initial_folder=application.Config.InitialMusicDirectory(),
+                enable_events=True,
+                key=EVENT_BROWSE_FILES
+            ),
+            ],
         ]
 
         self.window = sg.Window('Music Player', layout=layout, size=application.Config.PlayerSize())
         self.App = application
+        self.handlers = {}
+
+        for e in event_handlers:
+            self.handlers[e.EventName()] = e
 
     def Run(self):
         while True:
@@ -29,10 +39,10 @@ class PlayerGUI:
 
         self.window.close()
 
-    def handleEvent(self, event, _) -> bool:
-        if event == EVENT_HI:
-            self.window[KEY_HI].update(self.App.SayHi.Handle())
-        elif event == sg.WIN_CLOSED:
+    def handleEvent(self, event, values) -> bool:
+        if event == sg.WIN_CLOSED:
             return True
+
+        self.handlers[event].Handle(values[event])
 
         return False

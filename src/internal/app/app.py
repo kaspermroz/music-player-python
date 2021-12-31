@@ -1,19 +1,27 @@
-from typing import List, Type
+from typing import List
 
 from src.internal.app.interfaces.command_handler import CommandHandler
 from src.internal.app.interfaces.configuration import Configuration
+from src.internal.app.interfaces.query_handler import QueryHandler
 
 
 class Application:
-    SayHi = CommandHandler()
+    LoadSongs = CommandHandler()
+
+    GetSongsInLibrary = QueryHandler()
+
     Config = Configuration()
 
     def __init__(
             self,
             configuration: Configuration,
-            commands: List[Type[CommandHandler]],
+            commands: List[CommandHandler],
+            queries: List[QueryHandler]
     ) -> None:
         self.Config = configuration
-        for c in commands:
-            handler = c()
-            setattr(self, handler.HandlerName(), handler)
+
+        for h in commands:
+            setattr(self, h.HandlerName(), h)
+
+        for q in queries:
+            setattr(self, q.QueryName(), q)

@@ -2,9 +2,10 @@ from abc import ABC
 
 from src.internal.domain.music.song import Song
 from src.internal.domain.music.playlist import Playlist
+from src.service.singleton import Singleton
 
 
-class Player(ABC):
+class Player(ABC, metaclass=Singleton):
     """
     Player interface, every adapter must implement it
     """

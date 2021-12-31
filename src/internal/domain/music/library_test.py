@@ -4,7 +4,7 @@ from src.tests.fixtures import SomeLocalSong
 
 def test_library_is_singleton():
     lib = Library()
-    s = SomeLocalSong("local")
+    s = SomeLocalSong()
     lib.AddSong(s)
 
     assert len(lib.Songs()) == 1
