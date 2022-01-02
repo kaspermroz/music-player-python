@@ -15,5 +15,3 @@ class LoadSongsHandler(CommandHandler):
     def Handle(self, *songs: Song):
         for s in songs:
             self.library.AddSong(s)
-
-        print(self.library.Songs())

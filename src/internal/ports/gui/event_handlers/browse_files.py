@@ -19,7 +19,7 @@ class BrowseFilesHandler(EventHandler):
             song = Song(
                 song_id=str(uuid4()),
                 author="unknown",
-                title=basename(p),
+                title=basename(p).split('.')[0],
                 length=100,
                 cost=Money("21.37", Currency("PLN")),
                 path=p

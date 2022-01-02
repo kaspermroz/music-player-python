@@ -6,6 +6,9 @@ from src.internal.ports.gui.event_handler import EventHandler
 from src.internal.ports.gui.events import EVENT_BROWSE_FILES
 
 
+LIST_BOX_LIBRARY = "-LIBRARY-"
+
+
 class PlayerGUI:
     handlers: Dict[str, EventHandler]
 
@@ -18,8 +21,8 @@ class PlayerGUI:
                 initial_folder=application.Config.InitialMusicDirectory(),
                 enable_events=True,
                 key=EVENT_BROWSE_FILES
-            ),
-            ],
+            )],
+            [sg.Listbox(values=[], key=LIST_BOX_LIBRARY, size=(100, 100))]
         ]
 
         self.window = sg.Window('Music Player', layout=layout, size=application.Config.PlayerSize())
@@ -45,4 +48,13 @@ class PlayerGUI:
 
         self.handlers[event].Handle(values[event])
 
+        self.updateUI()
+
         return False
+
+    def updateUI(self):
+        songsInLibrary = self.App.GetSongsInLibrary.Execute()
+
+        songsTitles = [f"{s.Author()} - {s.Title()}" for s in songsInLibrary.values()]
+
+        self.window[LIST_BOX_LIBRARY].update(values=songsTitles)
