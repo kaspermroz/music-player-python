@@ -25,5 +25,7 @@ class LocalPlayer(Player):
     def PlaySongInLoop(self, _: Song):
         pass
 
-    def PlaySongOnce(self, _: Song):
+    def PlaySongOnce(self, song: Song):
+        mixer.music.unload()
+        mixer.music.load(song.Path())
         mixer.music.play()

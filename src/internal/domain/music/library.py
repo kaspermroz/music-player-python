@@ -23,6 +23,9 @@ class Library(metaclass=Singleton):
     def Songs(self) -> Dict[str, Song]:
         return self.songs
 
+    def SongByID(self, song_id: str) -> Song:
+        return self.songs[song_id]
+
     def LocalPlaylists(self) -> Dict[str, Playlist]:
         return self.localPlaylists
 

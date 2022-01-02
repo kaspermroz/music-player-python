@@ -7,6 +7,7 @@ from src.internal.app.interfaces.query_handler import QueryHandler
 
 class Application:
     LoadSongs = CommandHandler()
+    PlaySong = CommandHandler()
 
     GetSongsInLibrary = QueryHandler()
 

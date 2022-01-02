@@ -6,7 +6,7 @@ from src.internal.domain.music.song import Song
 class LoadSongsHandler(CommandHandler):
     library: Library
 
-    def __init__(self, library: Library):
+    def __init__(self, library: Library, **_kwargs):
         self.library = library
 
     def HandlerName(self) -> str:
