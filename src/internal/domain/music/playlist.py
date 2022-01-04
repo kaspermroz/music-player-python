@@ -32,6 +32,9 @@ class Playlist:
         self.isLocal = is_local
         self.songs = []
 
+    def Name(self) -> str:
+        return self.name
+
     def IsLocal(self) -> bool:
         return self.isLocal
 

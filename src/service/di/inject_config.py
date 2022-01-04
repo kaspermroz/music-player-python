@@ -11,7 +11,7 @@ class ServiceConfig(Configuration):
         add_dll_directory(f"{getcwd()}\\venv\\Lib\\site-packages\\pygame")
         load_dotenv()
 
-        self.playerSize = (650, 200)
+        self.playerSize = (800, 600)
         self.initialMusicDir = getenv('INITIAL_MUSIC_DIRECTORY')
 
     def PlayerSize(self) -> Tuple[int, int]:

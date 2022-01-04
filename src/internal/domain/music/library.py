@@ -38,3 +38,6 @@ class Library(metaclass=Singleton):
     def RemoveSong(self, song: Song):
         if song.ID() in self.songs:
             del self.songs[song.ID()]
+
+    def AddLocalPlaylist(self, local_playlist: Playlist):
+        self.localPlaylists[local_playlist.Name()] = local_playlist

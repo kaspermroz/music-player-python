@@ -13,14 +13,18 @@ class LocalPlayer(Player):
         mixer.init()
 
     def PlayPlaylistInLoop(self, _: Playlist):
-        for song in Playlist.Songs():
-            mixer.music.load(song.Path())
+        pass
+
+    def PlayPlaylistOnce(self, playlist: Playlist):
+        mixer.music.unload()
+        songs = playlist.Songs()
+
+        mixer.music.load(songs[0].Path())
+
+        for song in songs[1:]:
             mixer.music.queue(song.Path(), song.Title(), 0)
 
         mixer.music.play()
-
-    def PlayPlaylistOnce(self, _: Playlist):
-        pass
 
     def PlaySongInLoop(self, _: Song):
         pass

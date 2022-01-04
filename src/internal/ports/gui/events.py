@@ -1,3 +1,6 @@
 EVENT_BROWSE_FILES = "BrowseFiles"
 EVENT_PLAY_SONG = "PlaySong"
-EVENT_SELECT_SINGLE_SONG = "SelectSingleSong"
+EVENT_SELECT_SONGS = "SelectSingleSong"
+EVENT_CREATE_PLAYLIST = "CreatePlaylist"
+EVENT_SELECT_PLAYLIST = "SelectPlaylist"
+EVENT_PLAY_PLAYLIST = "PlayPlaylist"
