@@ -11,12 +11,15 @@ from src.internal.ports.gui.events import EVENT_PLAY_SONG, \
     EVENT_PLAY_PLAYLIST
 
 
+LOOP = "-LOOP-"
+
 class PlayerGUI:
     handlers: Dict[str, EventHandler]
 
     def __init__(self, application: Application, event_handlers: List[EventHandler]):
         sg.theme("DarkTeal2")
         layout = [
+            [sg.Checkbox(text="Loop", key=LOOP)],
             [sg.Button(button_text="Play Song", key=EVENT_PLAY_SONG)],
             [sg.Button(button_text="Create Playlist",  key=EVENT_CREATE_PLAYLIST)],
             [sg.Button(button_text="Play Playlist",  key=EVENT_PLAY_PLAYLIST)],
@@ -69,7 +72,7 @@ class PlayerGUI:
                 return False
 
             songId = self.songIds[self.selectedSongs[0]]
-            self.handlers[event].Handle(songId)
+            self.handlers[event].Handle(songId, values[LOOP])
         elif event == EVENT_SELECT_SONGS:
             if len(values[event]) > 0:
                 self.selectedSongs = values[event]
@@ -97,7 +100,7 @@ class PlayerGUI:
             self.selectedPlaylist = values[event][0]
 
         elif event == EVENT_PLAY_PLAYLIST:
-            self.handlers[event].Handle(self.selectedPlaylist)
+            self.handlers[event].Handle(self.selectedPlaylist, values[LOOP])
 
         else:
             self.handlers[event].Handle(values[event])
