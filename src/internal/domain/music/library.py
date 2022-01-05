@@ -23,6 +23,9 @@ class Library(metaclass=Singleton):
     def Songs(self) -> Dict[str, Song]:
         return self.songs
 
+    def SongByID(self, song_id: str) -> Song:
+        return self.songs[song_id]
+
     def LocalPlaylists(self) -> Dict[str, Playlist]:
         return self.localPlaylists
 
@@ -35,3 +38,6 @@ class Library(metaclass=Singleton):
     def RemoveSong(self, song: Song):
         if song.ID() in self.songs:
             del self.songs[song.ID()]
+
+    def AddLocalPlaylist(self, local_playlist: Playlist):
+        self.localPlaylists[local_playlist.Name()] = local_playlist

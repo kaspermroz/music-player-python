@@ -46,6 +46,9 @@ class Song:
     def Author(self) -> str:
         return self.author
 
+    def Title(self) -> str:
+        return self.title
+
     def Length(self) -> SongLength:
         return self.length
 
