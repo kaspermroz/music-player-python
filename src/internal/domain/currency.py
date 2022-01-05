@@ -12,3 +12,6 @@ class Currency:
 
     def IsZero(self) -> bool:
         return self.s == ""
+
+
+PLN = Currency("PLN")
