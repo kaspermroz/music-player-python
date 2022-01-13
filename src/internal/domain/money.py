@@ -36,7 +36,7 @@ class Money:
         return Money(str(self.Amount() + other.Amount()), self.Currency())
 
     def __sub__(self, other):
-        return Money(str(self.Amount() - other.Amount()), self.Currency())
+        return Money(str(abs(self.Amount() - other.Amount())), self.Currency())
 
     def __str__(self):
         return f"{self.Amount()} {self.Currency()}"
@@ -49,6 +49,9 @@ class Money:
 
     def Equal(self, m) -> bool:
         return self.amount.compare(m.Amount()) == 0 and self.currency == m.Currency()
+
+    def IsZero(self) -> bool:
+        return self.amount == Decimal(0)
 
     def Add(self, m: Decimal):
         self.amount = self.amount + m

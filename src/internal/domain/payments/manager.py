@@ -99,6 +99,14 @@ class PaymentsManager:
 
         return coins
 
+    def SumIn(self) -> Money:
+        sumIn = Money("0.00", self.currency)
+
+        for c in self.coinsIn:
+            sumIn += c.Value()
+
+        return sumIn
+
 
 def getBiggestCoin(amount: Money):
     if amount >= Coin5PLN.Value():
