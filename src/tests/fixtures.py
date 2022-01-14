@@ -1,10 +1,10 @@
-from src.internal.domain.currency import Currency
+from src.internal.domain.currency import Currency, PLN
 from src.internal.domain.money import Money
 from src.internal.domain.music.song import Song
 
 
 def SomeCurrency() -> Currency:
-    return Currency("PLN")
+    return PLN
 
 
 def SomeMoney() -> Money:

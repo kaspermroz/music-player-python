@@ -1,6 +1,8 @@
 from typing import List
 
 from src.internal.domain.music.song import Song
+from src.internal.domain.money import Money
+from src.internal.domain.currency import PLN
 
 
 class PlaylistTypeError(Exception):
@@ -49,3 +51,11 @@ class Playlist:
 
     def RemoveSong(self, song: Song):
         self.songs = [s for s in self.songs if s.ID() is not song.ID()]
+
+    def GetTotalCost(self) -> Money:
+        cost = Money("0.00", PLN)
+
+        for s in self.songs:
+            cost += s.Cost()
+
+        return cost
