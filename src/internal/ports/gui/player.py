@@ -1,4 +1,5 @@
 from typing import List, Dict
+from decimal import getcontext
 import PySimpleGUI as sg
 
 from src.internal.app.app import Application
@@ -49,17 +50,16 @@ class PlayerGUI:
         self.selectedSongs = []
         self.selectedPlaylist = None
         self.pm = payments_manager
-        self.credit = Money("0.00", payments_manager.currency)
 
         sg.theme("DarkTeal2")
         layout = [
             [
                 sg.Text("Credit: "),
-                sg.Text(str(self.credit), key=CREDIT),
+                sg.Text(str(self.pm.Credit()), key=CREDIT),
                 sg.Text("Paid: "),
                 sg.Text(str(self.pm.SumIn()), key=PAID),
                 sg.Button(button_text="Insert Coin", key=EVENT_INSERT_COIN),
-                sg.Button(button_text="GetChange", key=EVENT_GET_CHANGE),
+                sg.Button(button_text="Get Change", key=EVENT_GET_CHANGE),
             ],
             [sg.Checkbox(text="Loop", key=LOOP)],
             [sg.Button(button_text="Play Song", key=EVENT_PLAY_SONG)],
@@ -110,12 +110,7 @@ class PlayerGUI:
 
             songId = self.songIds[self.selectedSongs[0]]
             cost = self.getSongCostByID(songId)
-            if cost >= self.pm.SumIn():
-                rest = self.pm.SumIn() - cost
-                self.pm.GetChange(self.pm.SumIn())
-                self.credit += rest
-            else:
-                self.pm.GetChange(cost)
+            self.pm.AddCredit(cost)
 
             self.updateMoney()
             self.handlers[event].Handle(songId, values[LOOP])
@@ -156,11 +151,7 @@ class PlayerGUI:
 
             else:
                 self.pm.AddCoin(coinsMap[value])
-            if self.credit > Money("0.00", self.pm.currency):
-                self.pm.GetChange(self.credit)
-                self.credit = Money("0.00", self.pm.currency)
-
-            self.updateMoney()
+                self.updateMoney()
 
             return False
 
@@ -168,8 +159,9 @@ class PlayerGUI:
             if self.pm.SumIn().IsZero():
                 sg.Popup("No cash to get")
             else:
-                change = self.pm.GetChange(self.credit)
+                change = self.pm.GetChange(self.pm.Credit())
                 sg.Popup(", ".join([str(c.Value()) for c in change]))
+                self.updateMoney()
 
             return False
         else:
@@ -198,7 +190,7 @@ class PlayerGUI:
         self.window[EVENT_SELECT_PLAYLIST].update(values=playlistNames)
 
     def updateMoney(self):
-        self.window[CREDIT].update(value=str(self.credit))
+        self.window[CREDIT].update(value=str(self.pm.Credit()))
         self.window[PAID].update(value=str(self.pm.SumIn()))
 
     def getSongCostByID(self, song_id: str) -> Money:

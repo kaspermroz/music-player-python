@@ -15,8 +15,6 @@ class Money:
         if currency.IsZero():
             raise TypeError("currency cannot be empty")
 
-        getcontext().prec = 2
-
         self.amount = Decimal(amount)
         self.currency = currency
 
@@ -31,6 +29,9 @@ class Money:
 
     def __ge__(self, other) -> bool:
         return self.Currency() == other.Currency() and self.Amount() >= other.Amount()
+
+    def __eq__(self, other) -> bool:
+        return str(self) == str(other)
 
     def __add__(self, other):
         return Money(str(self.Amount() + other.Amount()), self.Currency())
@@ -55,3 +56,7 @@ class Money:
 
     def Add(self, m: Decimal):
         self.amount = self.amount + m
+
+
+def MoneyZero(currency: Currency) -> Money:
+    return Money("0.00", currency)

@@ -4,9 +4,7 @@ from src.internal.domain.payments.manager import PaymentsManager, CurrencyMismat
 from src.internal.domain.payments.coin import Coin, \
     Coin1GR, \
     Coin2GR, \
-    Coin5GR, \
     Coin10GR, \
-    Coin20GR, \
     Coin50GR, \
     Coin1PLN, \
     Coin2PLN, \
@@ -21,7 +19,7 @@ def test_payments_manager_add_coins():
 
     pm.AddCoin(Coin1PLN)
 
-    assert pm.CoinsIn()[0] is Coin1PLN
+    assert pm.SumIn() == Coin1PLN.Value()
 
     coin1EUR = Coin(Money("1", EUR))
 
@@ -56,4 +54,26 @@ def test_payments_manager_get_change_exception():
     with raises(ChangeError) as err:
         pm.GetChange(SomeMoney())
 
-    assert err.value.message == "paid amount is bigger than sum of coins in [0 PLN < 21.37 PLN]"
+    assert err.value.message == "paid amount is bigger than sum of coins in [0.00 PLN < 21.37 PLN]"
+
+
+def test_payments_manager_credit():
+    pm = PaymentsManager(PLN)
+
+    pm.AddCredit(SomeMoney())
+
+    assert pm.Credit() == SomeMoney()
+
+    pm.AddCoin(Coin5PLN)
+    pm.AddCoin(Coin2PLN)
+    pm.AddCoin(Coin1PLN)
+
+    assert pm.Credit() == Money("13.37", PLN)
+    assert pm.SumIn() == pm.moneyZero()
+
+    pm = PaymentsManager(PLN)
+    pm.AddCoin(Coin5PLN)
+    pm.AddCredit(Money("3.00", PLN))
+
+    assert pm.Credit() == pm.moneyZero()
+    assert pm.SumIn() == Coin2PLN.Value()

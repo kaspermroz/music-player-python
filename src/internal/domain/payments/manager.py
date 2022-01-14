@@ -1,6 +1,6 @@
 from typing import List
 from decimal import Decimal
-from src.internal.domain.money import Money
+from src.internal.domain.money import Money, MoneyZero
 from src.internal.domain.currency import Currency
 from src.internal.domain.payments.coin import Coin, \
     Coin1GR, \
@@ -43,7 +43,8 @@ class PaymentsManager:
     currency: Currency
     allowedCoinsIn: List[Coin]
     allowedCoinsOut: List[Coin]
-    coinsIn: List[Coin]
+    sumIn: Money
+    credit: Money
 
     def __init__(self, cur: Currency):
         self.currency = cur
@@ -67,6 +68,8 @@ class PaymentsManager:
             Coin5PLN,
         ]
         self.coinsIn = []
+        self.sumIn = self.moneyZero()
+        self.credit = self.moneyZero()
 
     def CoinsIn(self) -> List[Coin]:
         return self.coinsIn
@@ -74,20 +77,34 @@ class PaymentsManager:
     def AddCoin(self, c: Coin):
         if c.Value().Currency() != self.currency:
             raise CurrencyMismatchError(self.currency, c.Value().Currency())
-        self.coinsIn.append(c)
+
+        if self.credit > self.moneyZero():
+            if self.credit >= c.Value():
+                self.credit -= c.Value()
+            else:
+                self.sumIn = c.Value() - self.credit
+                self.credit = self.moneyZero()
+        else:
+            self.sumIn += c.Value()
+
+    def AddCredit(self, amount: Money):
+        if self.sumIn > self.moneyZero():
+            if self.sumIn >= amount:
+                self.sumIn -= amount
+            else:
+                self.credit = amount - self.sumIn
+                self.sumIn = self.moneyZero()
+        else:
+            self.credit += amount
 
     def GetChange(self, paid: Money) -> List[Coin]:
-        sumIn = Money("0", self.currency)
-
-        for c in self.coinsIn:
-            sumIn += c.Value()
-
-        if sumIn < paid:
+        if self.sumIn < paid:
             raise ChangeError(
-                f"paid amount is bigger than sum of coins in [{sumIn} < {paid}]"
+                f"paid amount is bigger than sum of coins in [{self.sumIn} < {paid}]"
             )
 
-        change = sumIn - paid
+        change = self.sumIn - paid
+        self.sumIn -= paid
         coins = []
 
         while change > Money("0", self.currency):
@@ -95,17 +112,16 @@ class PaymentsManager:
             coins.append(c)
             change -= c.Value()
 
-        self.coinsIn = []
-
         return coins
 
     def SumIn(self) -> Money:
-        sumIn = Money("0.00", self.currency)
+        return self.sumIn
 
-        for c in self.coinsIn:
-            sumIn += c.Value()
+    def Credit(self) -> Money:
+        return self.credit
 
-        return sumIn
+    def moneyZero(self) -> Money:
+        return MoneyZero(self.currency)
 
 
 def getBiggestCoin(amount: Money):
