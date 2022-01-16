@@ -9,13 +9,13 @@ from src.internal.domain.money import Money
 from src.internal.ports.gui.event_handler import EventHandler
 from src.internal.ports.gui.events import *
 
-"""GUI elements without dedicated events"""
+
 LOOP = "-LOOP-"
 CREDIT = "-CREDIT-"
 PAID = "-PAID-"
 SWITCH = "-SWITCH-"
+"""GUI elements without dedicated events"""
 
-"""Map of user input to coins"""
 coinsMap = {
     "0.10": Coin10GR,
     "0.20": Coin20GR,
@@ -27,6 +27,7 @@ coinsMap = {
     "5.00": Coin5PLN,
     "5": Coin5PLN,
 }
+"""Map of user input to coins"""
 
 
 class PlayerGUI:

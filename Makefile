@@ -8,4 +8,4 @@ run:
 	python3 main.py
 
 test:
-	pytest
+	pytest --html=./src/tests/pytest_report.html
