@@ -7,6 +7,7 @@ from src.internal.ports.gui.event_handlers.create_playlist import CreatePlaylist
 from src.internal.ports.gui.event_handlers.play_playlist import PlayPlaylistHandler
 from src.internal.ports.gui.event_handlers.delete_song import DeleteSongHandler
 from src.internal.ports.gui.event_handlers.delete_playlist import DeletePlaylistHandler
+from src.internal.ports.gui.event_handlers.stop import StopHandler
 
 Handlers: List[Type[EventHandler]] = [
     BrowseFilesHandler,
@@ -15,4 +16,5 @@ Handlers: List[Type[EventHandler]] = [
     PlayPlaylistHandler,
     DeleteSongHandler,
     DeletePlaylistHandler,
+    StopHandler,
 ]

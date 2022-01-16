@@ -12,6 +12,7 @@ class Application:
     CreateLocalPlaylist = CommandHandler()
     DeleteSong = CommandHandler()
     DeletePlaylist = CommandHandler()
+    StopPlayback = CommandHandler()
 
     GetSongsInLibrary = QueryHandler()
     GetLocalPlaylists = QueryHandler()

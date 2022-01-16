@@ -68,6 +68,7 @@ class PlayerGUI:
             [
                 sg.Button(button_text="Play Song", key=EVENT_PLAY_SONG),
                 sg.Button(button_text="Delete Song", key=EVENT_DELETE_SONG),
+                sg.Button(button_text="STOP", key=EVENT_STOP)
             ],
 
             [sg.Text("Library")],
@@ -123,10 +124,12 @@ class PlayerGUI:
         :param values:
         :return:
         """
-        print(event)
 
         if event == sg.WIN_CLOSED:
             return True
+
+        if event == EVENT_STOP:
+            self.handlers[event].Handle()
 
         elif event == EVENT_PLAY_SONG:
             if self.selectedSongs is None:
