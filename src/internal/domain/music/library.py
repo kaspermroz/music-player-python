@@ -43,9 +43,15 @@ class Library(metaclass=Singleton):
     def SetSearchResults(self, songs: List[Song]):
         self.searchResults = {s.ID(): s for s in songs}
 
-    def RemoveSong(self, song: Song):
-        if song.ID() in self.songs:
-            del self.songs[song.ID()]
+    def RemoveSong(self, song_id: str):
+        if song_id in self.songs:
+            del self.songs[song_id]
+
+        print(self.songs)
 
     def AddLocalPlaylist(self, local_playlist: Playlist):
         self.localPlaylists[local_playlist.Name()] = local_playlist
+
+    def RemoveLocalPlaylist(self, playlist_name: str):
+        if playlist_name in self.localPlaylists.keys():
+            del self.localPlaylists[playlist_name]
