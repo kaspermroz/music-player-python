@@ -7,7 +7,7 @@ class PlayLocalPlaylistHandler(CommandHandler):
     library: Library
     player: Player
 
-    def __init__(self, library: Library, local_player: Player):
+    def __init__(self, library: Library, local_player: Player, **_kwargs):
         self.library = library
         self.player = local_player
 

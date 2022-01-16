@@ -1,5 +1,4 @@
 from typing import List, Dict
-from decimal import getcontext
 import PySimpleGUI as sg
 
 from src.internal.app.app import Application
@@ -20,11 +19,13 @@ from src.internal.ports.gui.events import EVENT_PLAY_SONG, \
     EVENT_SELECT_PLAYLIST, \
     EVENT_PLAY_PLAYLIST, \
     EVENT_INSERT_COIN, \
-    EVENT_GET_CHANGE
+    EVENT_GET_CHANGE, \
+    EVENT_SEARCH_STREAMING
 
 LOOP = "-LOOP-"
 CREDIT = "-CREDIT-"
 PAID = "-PAID-"
+SWITCH = "-SWITCH-"
 
 coinsMap = {
     "0.10": Coin10GR,
@@ -50,9 +51,12 @@ class PlayerGUI:
         self.selectedSongs = []
         self.selectedPlaylist = None
         self.pm = payments_manager
+        self.isLocalMode = True
+        self.searchResults = {}
 
         sg.theme("DarkTeal2")
         layout = [
+            [sg.Button(button_text="Switch Mode", key=SWITCH)],
             [
                 sg.Text("Credit: "),
                 sg.Text(str(self.pm.Credit()), key=CREDIT),
@@ -61,24 +65,33 @@ class PlayerGUI:
                 sg.Button(button_text="Insert Coin", key=EVENT_INSERT_COIN),
                 sg.Button(button_text="Get Change", key=EVENT_GET_CHANGE),
             ],
-            [sg.Checkbox(text="Loop", key=LOOP)],
-            [sg.Button(button_text="Play Song", key=EVENT_PLAY_SONG)],
-            [sg.Button(button_text="Create Playlist", key=EVENT_CREATE_PLAYLIST)],
-            [sg.Button(button_text="Play Playlist", key=EVENT_PLAY_PLAYLIST)],
-            [sg.FilesBrowse(
-                button_text="Load MP3 files from disk",
-                file_types=(("MP3 files", "*.mp3"),),
-                initial_folder=application.Config.InitialMusicDirectory(),
-                enable_events=True,
-                key=EVENT_BROWSE_FILES
-            )],
+            [
+                sg.Button(button_text="Play Song", key=EVENT_PLAY_SONG),
+                sg.Button(button_text="Create Playlist", key=EVENT_CREATE_PLAYLIST),
+                sg.Button(button_text="Play Playlist", key=EVENT_PLAY_PLAYLIST),
+                sg.Checkbox(text="Loop", key=LOOP),
+            ],
+            [
+                sg.FilesBrowse(
+                    button_text="Load MP3 files from disk",
+                    file_types=(("MP3 files", "*.mp3"),),
+                    initial_folder=application.Config.InitialMusicDirectory(),
+                    enable_events=True,
+                    key=EVENT_BROWSE_FILES),
+                sg.Input(
+                    default_text="Search Spotify...",
+                    enable_events=True,
+                    key=EVENT_SEARCH_STREAMING,
+                    visible=False
+                )
+            ],
             [sg.Text("Library")],
             [sg.Listbox(
                 values=[],
                 select_mode=sg.SELECT_MODE_MULTIPLE,
                 key=EVENT_SELECT_SONGS,
                 size=(100, 10), enable_events=True)],
-            [sg.Text("Local Playlists")],
+            [sg.Text("Playlists")],
             [sg.Listbox(
                 values=[],
                 key=EVENT_SELECT_PLAYLIST,
@@ -99,6 +112,11 @@ class PlayerGUI:
                 break
 
         self.window.close()
+
+    def switchMode(self):
+        self.isLocalMode = not self.isLocalMode
+        self.window[EVENT_BROWSE_FILES].update(visible=self.isLocalMode)
+        self.window[EVENT_SEARCH_STREAMING].update(visible=not self.isLocalMode)
 
     def handleEvent(self, event, values) -> bool:
         if event == sg.WIN_CLOSED:
@@ -164,6 +182,26 @@ class PlayerGUI:
                 self.updateMoney()
 
             return False
+
+        elif event == SWITCH:
+            self.switchMode()
+            return False
+
+        elif event == EVENT_SEARCH_STREAMING:
+            search = values[EVENT_SEARCH_STREAMING]
+            if len(search) > 2:
+                results = self.App.SearchStreaming.Execute(search)
+                songTitles = []
+
+                for song in results:
+                    songSlug = f"{song.Author()} - {song.Title()} ({song.Cost()})"
+                    songTitles.append(songSlug)
+                    self.songIds[songSlug] = song.ID()
+                    self.searchResults[song.ID()] = song
+
+                self.window[EVENT_SELECT_SONGS].update(values=songTitles)
+            return False
+
         else:
             self.handlers[event].Handle(values[event])
             self.updateLibrary()
@@ -194,7 +232,10 @@ class PlayerGUI:
         self.window[PAID].update(value=str(self.pm.SumIn()))
 
     def getSongCostByID(self, song_id: str) -> Money:
-        return self.App.GetSongsInLibrary.Execute()[song_id].Cost()
+        if self.isLocalMode:
+            return self.App.GetSongsInLibrary.Execute()[song_id].Cost()
+        else:
+            return self.searchResults[song_id].Cost()
 
     def getPlaylistCostByName(self, playlist: str) -> Money:
         return self.App.GetLocalPlaylists.Execute()[playlist].GetTotalCost()

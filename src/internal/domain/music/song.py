@@ -56,7 +56,7 @@ class Song:
         return self.path
 
     def IsLocal(self) -> bool:
-        return not self.path.startswith("spotify")
+        return not self.path.startswith("http")
 
     def Cost(self) -> Money:
         return self.cost

@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from src.internal.domain.music.song import Song
 from src.internal.domain.music.playlist import Playlist
@@ -12,11 +12,13 @@ class Library(metaclass=Singleton):
     """
 
     songs: Dict[str, Song]
+    searchResults: Dict[str, Song]
     localPlaylists: Dict[str, Playlist]
     streamingPlaylists: Dict[str, Playlist]
 
     def __init__(self):
         self.songs = {}
+        self.searchResults = {}
         self.localPlaylists = {}
         self.streamingPlaylists = {}
 
@@ -24,7 +26,10 @@ class Library(metaclass=Singleton):
         return self.songs
 
     def SongByID(self, song_id: str) -> Song:
-        return self.songs[song_id]
+        if song_id in self.songs.keys():
+            return self.songs[song_id]
+
+        return self.searchResults[song_id]
 
     def LocalPlaylists(self) -> Dict[str, Playlist]:
         return self.localPlaylists
@@ -34,6 +39,9 @@ class Library(metaclass=Singleton):
 
     def AddSong(self, song: Song):
         self.songs[song.ID()] = song
+
+    def SetSearchResults(self, songs: List[Song]):
+        self.searchResults = {s.ID(): s for s in songs}
 
     def RemoveSong(self, song: Song):
         if song.ID() in self.songs:

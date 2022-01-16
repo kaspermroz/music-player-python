@@ -5,7 +5,7 @@ from src.internal.domain.music.library import Library
 class GetSongsInLibraryHandler(QueryHandler):
     library: Library
 
-    def __init__(self, library: Library):
+    def __init__(self, library: Library, **_kwargs):
         self.library = library
 
     def QueryName(self) -> str:

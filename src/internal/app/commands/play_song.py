@@ -7,9 +7,10 @@ class PlaySongHandler(CommandHandler):
     library: Library
     player: Player
 
-    def __init__(self, library: Library, local_player: Player):
+    def __init__(self, library: Library, local_player: Player, streaming_player: Player):
         self.library = library
         self.player = local_player
+        self.streaming = streaming_player
 
     def HandlerName(self) -> str:
         return "PlaySong"
@@ -17,7 +18,13 @@ class PlaySongHandler(CommandHandler):
     def Handle(self, song_id: str, loop: bool):
         song = self.library.SongByID(song_id)
 
-        if loop:
-            self.player.PlaySongInLoop(song)
+        if song.IsLocal():
+            if loop:
+                self.player.PlaySongInLoop(song)
+            else:
+                self.player.PlaySongOnce(song)
         else:
-            self.player.PlaySongOnce(song)
+            if loop:
+                self.streaming.PlaySongInLoop(song)
+            else:
+                self.streaming.PlaySongOnce(song)

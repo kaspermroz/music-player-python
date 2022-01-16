@@ -13,6 +13,7 @@ class Application:
 
     GetSongsInLibrary = QueryHandler()
     GetLocalPlaylists = QueryHandler()
+    SearchStreaming = QueryHandler()
 
     Config = Configuration()
 
