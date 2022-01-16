@@ -113,6 +113,13 @@ class PlayerGUI:
         self.window[EVENT_BROWSE_FILES].update(visible=self.isLocalMode)
         self.window[EVENT_SEARCH_STREAMING].update(visible=not self.isLocalMode)
 
+        if self.isLocalMode:
+            self.updateLibrary()
+            self.updateLocalPlaylists()
+
+        else:
+            self.window[EVENT_SELECT_SONGS].update(values=[])
+
     def handleEvent(self, event, values) -> bool:
         """
         Method for handling GUI events inside a loop (clicks, inputs, etc).
@@ -132,7 +139,7 @@ class PlayerGUI:
             self.handlers[event].Handle()
 
         elif event == EVENT_PLAY_SONG:
-            if self.selectedSongs is None:
+            if len(self.selectedSongs) == 0:
                 return False
 
             songId = self.songIds[self.selectedSongs[0]]
@@ -143,7 +150,7 @@ class PlayerGUI:
             self.handlers[event].Handle(songId, values[LOOP])
 
         elif event == EVENT_DELETE_SONG:
-            if self.selectedSongs is None or not self.isLocalMode:
+            if len(self.selectedSongs) == 0 or not self.isLocalMode:
                 return False
 
             songId = self.songIds[self.selectedSongs[0]]
@@ -156,7 +163,7 @@ class PlayerGUI:
                 self.selectedSongs = values[event]
 
         elif event == EVENT_CREATE_PLAYLIST:
-            if self.selectedSongs is None:
+            if len(self.selectedSongs) == 0:
                 return False
 
             name = sg.popup_get_text(
@@ -178,10 +185,12 @@ class PlayerGUI:
             self.selectedPlaylist = values[event][0]
 
         elif event == EVENT_PLAY_PLAYLIST:
+            if self.selectedPlaylist is None:
+                return False
             self.handlers[event].Handle(self.selectedPlaylist, values[LOOP])
 
         elif event == EVENT_DELETE_PLAYLIST:
-            if self.selectedPlaylist == "":
+            if self.selectedPlaylist is None:
                 return False
 
             self.handlers[event].Handle(self.selectedPlaylist)
