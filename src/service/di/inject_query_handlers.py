@@ -6,11 +6,12 @@ from src.internal.app.queries.handlers import Handlers
 from src.internal.domain.music.library import Library
 
 
-def QueryHandlers() -> List[QueryHandler]:
+def QueryHandlers(local_player) -> List[QueryHandler]:
     queryHandlers: List[QueryHandler] = []
     queryDeps = {
         "library": Library(),
-        "streaming_player": StreamingPlayer()
+        "streaming_player": StreamingPlayer(),
+        "local_player": local_player
     }
 
     for h in Handlers:

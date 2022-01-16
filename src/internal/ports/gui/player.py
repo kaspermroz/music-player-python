@@ -1,4 +1,5 @@
 from typing import List, Dict
+from decimal import Decimal
 import PySimpleGUI as sg
 
 from src.internal.app.app import Application
@@ -119,6 +120,7 @@ class PlayerGUI:
 
         else:
             self.window[EVENT_SELECT_SONGS].update(values=[])
+            self.window[EVENT_SELECT_PLAYLIST].update(values=[])
 
     def handleEvent(self, event, values) -> bool:
         """
@@ -137,6 +139,14 @@ class PlayerGUI:
 
         if event == EVENT_STOP:
             self.handlers[event].Handle()
+            refund = self.pm.moneyZero()
+            skipped = self.App.GetSkippedSongs.Execute()
+
+            for s in skipped:
+                refund += getRefundCost(s.Cost())
+
+            self.pm.AddMoney(refund)
+            self.updateMoney()
 
         elif event == EVENT_PLAY_SONG:
             if len(self.selectedSongs) == 0:
@@ -144,6 +154,11 @@ class PlayerGUI:
 
             songId = self.songIds[self.selectedSongs[0]]
             cost = self.getSongCostByID(songId)
+            if self.isLocalMode:
+                cost = getLocalCost(cost)
+            if values[LOOP]:
+                cost = getLoopCost(cost)
+
             self.pm.AddCredit(cost)
 
             self.updateMoney()
@@ -187,6 +202,16 @@ class PlayerGUI:
         elif event == EVENT_PLAY_PLAYLIST:
             if self.selectedPlaylist is None:
                 return False
+
+            cost = self.getPlaylistCostByName(self.selectedPlaylist)
+            if self.isLocalMode:
+                cost = getLocalCost(cost)
+            if values[LOOP]:
+                cost = getLoopCost(cost)
+
+            self.pm.AddCredit(cost)
+            self.updateMoney()
+
             self.handlers[event].Handle(self.selectedPlaylist, values[LOOP])
 
         elif event == EVENT_DELETE_PLAYLIST:
@@ -268,3 +293,10 @@ class PlayerGUI:
 
     def getPlaylistCostByName(self, playlist: str) -> Money:
         return self.App.GetLocalPlaylists.Execute()[playlist].GetTotalCost()
+
+
+getLocalCost = lambda cost: Money(str(round(cost.Amount()/2, 2)), cost.Currency())
+
+getLoopCost = lambda cost: Money(str(round(cost.Amount()*Decimal(1.25), 2)), cost.Currency())
+
+getRefundCost = lambda cost: Money(str(round(cost.Amount()*Decimal(0.45), 2)), cost.Currency())

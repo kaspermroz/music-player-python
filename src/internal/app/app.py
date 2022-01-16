@@ -17,6 +17,7 @@ class Application:
     GetSongsInLibrary = QueryHandler()
     GetLocalPlaylists = QueryHandler()
     SearchStreaming = QueryHandler()
+    GetSkippedSongs = QueryHandler()
 
     Config = Configuration()
 
