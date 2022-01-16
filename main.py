@@ -1,4 +1,6 @@
-"""Main module"""
+"""
+Main module - builds the application, injects dependencies and runs GUI
+"""
 from src.internal.domain.currency import PLN
 from src.internal.domain.payments.manager import PaymentsManager
 from src.service.di.inject_application import BuildApplication

@@ -4,6 +4,9 @@ from src.internal.domain.currency import Currency
 
 
 class Money:
+    """
+    Money domain object, holds information on decimal value and currency
+    """
     amount: Decimal
     currency: Currency
 

@@ -25,6 +25,9 @@ class PlaylistTypeError(Exception):
 
 
 class Playlist:
+    """
+    Domain object for playlists, holds name, isLocal flag and list of songs
+    """
     name: str
     isLocal: bool
     songs: List[Song]

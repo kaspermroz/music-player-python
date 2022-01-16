@@ -9,11 +9,13 @@ from src.internal.domain.money import Money
 from src.internal.ports.gui.event_handler import EventHandler
 from src.internal.ports.gui.events import *
 
+"""GUI elements without dedicated events"""
 LOOP = "-LOOP-"
 CREDIT = "-CREDIT-"
 PAID = "-PAID-"
 SWITCH = "-SWITCH-"
 
+"""Map of user input to coins"""
 coinsMap = {
     "0.10": Coin10GR,
     "0.20": Coin20GR,
@@ -28,6 +30,11 @@ coinsMap = {
 
 
 class PlayerGUI:
+    """
+    Implementation of GUI port, uses PySimpleGUI library for building layout.
+    Has Application as dependency in order to use commands and queries.
+    Has PaymentsManager as dependency for payments functionality.
+    """
     handlers: Dict[str, EventHandler]
 
     def __init__(self, application: Application, event_handlers: List[EventHandler],
@@ -110,6 +117,10 @@ class PlayerGUI:
         self.window.close()
 
     def switchMode(self):
+        """
+        Used for switching between local and streaming mode
+        :return:
+        """
         self.isLocalMode = not self.isLocalMode
         self.window[EVENT_BROWSE_FILES].update(visible=self.isLocalMode)
         self.window[EVENT_SEARCH_STREAMING].update(visible=not self.isLocalMode)
@@ -263,6 +274,10 @@ class PlayerGUI:
         return False
 
     def updateLibrary(self):
+        """
+        Updates GUI library with local songs
+        :return:
+        """
         songsInLibrary = self.App.GetSongsInLibrary.Execute()
         songTitles = []
 
@@ -274,6 +289,10 @@ class PlayerGUI:
         self.window[EVENT_SELECT_SONGS].update(values=songTitles)
 
     def updateLocalPlaylists(self):
+        """
+        Updates GUI with local playlists
+        :return:
+        """
         localPlaylists = self.App.GetLocalPlaylists.Execute()
         playlistNames = []
         for name in localPlaylists.keys():
@@ -282,21 +301,37 @@ class PlayerGUI:
         self.window[EVENT_SELECT_PLAYLIST].update(values=playlistNames)
 
     def updateMoney(self):
+        """
+        Updates Paid and Credit information using PaymentsManager
+        :return:
+        """
         self.window[CREDIT].update(value=str(self.pm.Credit()))
         self.window[PAID].update(value=str(self.pm.SumIn()))
 
     def getSongCostByID(self, song_id: str) -> Money:
+        """
+        Returns cost of song by ID
+        :param song_id:
+        :return:
+        """
         if self.isLocalMode:
             return self.App.GetSongsInLibrary.Execute()[song_id].Cost()
         else:
             return self.searchResults[song_id].Cost()
 
     def getPlaylistCostByName(self, playlist: str) -> Money:
+        """
+        Returns accumulated cost of playlist by name
+        :param playlist:
+        :return:
+        """
         return self.App.GetLocalPlaylists.Execute()[playlist].GetTotalCost()
 
-
 getLocalCost = lambda cost: Money(str(round(cost.Amount()/2, 2)), cost.Currency())
+"""Cuts the price of local songs by half"""
 
 getLoopCost = lambda cost: Money(str(round(cost.Amount()*Decimal(1.25), 2)), cost.Currency())
+"""Adds 25% of song value when in loop"""
 
 getRefundCost = lambda cost: Money(str(round(cost.Amount()*Decimal(0.45), 2)), cost.Currency())
+"""Calculates refunds of local songs (10% of half-base cost - 5% refund)"""

@@ -4,6 +4,9 @@ from src.internal.domain.music.library import Library
 
 
 class PlaySongHandler(CommandHandler):
+    """
+    Plays song from library with optional loop
+    """
     library: Library
     player: Player
 

@@ -3,6 +3,9 @@ from src.internal.app.interfaces.query_handler import QueryHandler
 
 
 class GetSkippedSongsHandler(QueryHandler):
+    """
+    Returns all not-played songs from current playlist for refund
+    """
     player: LocalPlayer
 
     def __init__(self, local_player: LocalPlayer, **_kwargs):

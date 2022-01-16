@@ -1,3 +1,4 @@
+"""List of all GUI event handlers"""
 from typing import List, Type
 
 from src.internal.ports.gui.event_handler import EventHandler

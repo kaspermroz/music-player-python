@@ -7,6 +7,11 @@ from src.internal.adapters.streaming_player import StreamingPlayer
 
 
 def CommandHandlers(local_player) -> List[CommandHandler]:
+    """
+    Returns application command handlers, used for changing state of application
+    :param local_player:
+    :return:
+    """
     handlers: List[CommandHandler] = []
     handlerDeps = {
         "library": Library(),

@@ -6,6 +6,11 @@ from src.internal.ports.gui.event_handlers.handlers import Handlers
 
 
 def EventHandlers(app: Application) -> List[EventHandler]:
+    """
+    Injects event handlers for GUI, which react to user events like button clicks and inputs
+    :param app:
+    :return:
+    """
     eventHandlers: List[EventHandler] = []
     eventDeps = {
         "application": app

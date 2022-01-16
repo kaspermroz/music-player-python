@@ -3,6 +3,9 @@ from src.internal.domain.music.library import Library
 
 
 class DeletePlaylistHandler(CommandHandler):
+    """
+    Deletes local playlsit by name
+    """
     library: Library
 
     def __init__(self, library: Library, **_kwargs):

@@ -3,6 +3,9 @@ from src.internal.domain.currency import PLN
 
 
 class Coin:
+    """
+    Domain model for coins used by GUI and PaymentsManager
+    """
     value: Money
 
     def __init__(self, value: Money):

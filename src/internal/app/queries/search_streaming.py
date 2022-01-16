@@ -4,6 +4,9 @@ from src.internal.domain.music.library import Library
 
 
 class SearchStreamingHandler(QueryHandler):
+    """
+    Returns search results from Spotify based on search phrase
+    """
     library: Library
     streaming: StreamingPlayer
 

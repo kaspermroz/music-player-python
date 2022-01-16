@@ -3,6 +3,9 @@ from src.internal.domain.music.library import Library
 
 
 class GetSongsInLibraryHandler(QueryHandler):
+    """
+    Returns all songs from library
+    """
     library: Library
 
     def __init__(self, library: Library, **_kwargs):

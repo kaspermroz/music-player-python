@@ -4,6 +4,9 @@ from src.internal.domain.music.library import Library
 
 
 class PlayLocalPlaylistHandler(CommandHandler):
+    """
+    Plays local playlists by name with optional loop
+    """
     library: Library
     player: Player
 

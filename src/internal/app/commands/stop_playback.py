@@ -3,6 +3,9 @@ from src.internal.app.interfaces.player import Player
 
 
 class StopPlaybackHandler(CommandHandler):
+    """
+    Stops all playback
+    """
     player: Player
 
     def __init__(self, local_player: Player, **_kwargs):

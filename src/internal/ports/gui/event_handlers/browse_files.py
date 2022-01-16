@@ -16,6 +16,11 @@ YEAR_TAG = "TDRC"
 
 
 class BrowseFilesHandler(EventHandler):
+    """
+    Executes when: User selects MP3 files from disc
+    Functionality: Loads mp3 files and creates Song objects,
+    puts songs in library
+    """
     def EventName(self) -> str:
         return EVENT_BROWSE_FILES
 

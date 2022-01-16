@@ -3,7 +3,7 @@ from abc import ABC
 
 class QueryHandler(ABC):
     """
-    Standard query interface, used for reading
+    Standard query interface, used for reading application state
     """
     def __init__(self, **_kwargs):
         pass

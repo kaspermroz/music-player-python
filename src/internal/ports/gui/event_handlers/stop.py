@@ -3,6 +3,10 @@ from src.internal.ports.gui.events import EVENT_STOP
 
 
 class StopHandler(EventHandler):
+    """
+       Executes when: User clicks STOP button
+       Functionality: Stops all playback
+    """
     def EventName(self) -> str:
         return EVENT_STOP
 
