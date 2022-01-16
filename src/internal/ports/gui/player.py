@@ -1,26 +1,13 @@
 from typing import List, Dict
+from decimal import Decimal
 import PySimpleGUI as sg
 
 from src.internal.app.app import Application
-from src.internal.domain.payments.coin import Coin, \
-    Coin10GR, \
-    Coin20GR, \
-    Coin50GR, \
-    Coin1PLN, \
-    Coin2PLN, \
-    Coin5PLN
+from src.internal.domain.payments.coin import *
 from src.internal.domain.payments.manager import PaymentsManager
 from src.internal.domain.money import Money
 from src.internal.ports.gui.event_handler import EventHandler
-from src.internal.ports.gui.events import EVENT_PLAY_SONG, \
-    EVENT_SELECT_SONGS, \
-    EVENT_BROWSE_FILES, \
-    EVENT_CREATE_PLAYLIST, \
-    EVENT_SELECT_PLAYLIST, \
-    EVENT_PLAY_PLAYLIST, \
-    EVENT_INSERT_COIN, \
-    EVENT_GET_CHANGE, \
-    EVENT_SEARCH_STREAMING
+from src.internal.ports.gui.events import *
 
 LOOP = "-LOOP-"
 CREDIT = "-CREDIT-"
@@ -56,7 +43,7 @@ class PlayerGUI:
 
         sg.theme("DarkTeal2")
         layout = [
-            [sg.Button(button_text="Switch Mode", key=SWITCH)],
+            [sg.Button(button_text="Switch Mode", key=SWITCH), sg.Checkbox(text="Loop", key=LOOP)],
             [
                 sg.Text("Credit: "),
                 sg.Text(str(self.pm.Credit()), key=CREDIT),
@@ -66,31 +53,36 @@ class PlayerGUI:
                 sg.Button(button_text="Get Change", key=EVENT_GET_CHANGE),
             ],
             [
-                sg.Button(button_text="Play Song", key=EVENT_PLAY_SONG),
-                sg.Button(button_text="Create Playlist", key=EVENT_CREATE_PLAYLIST),
-                sg.Button(button_text="Play Playlist", key=EVENT_PLAY_PLAYLIST),
-                sg.Checkbox(text="Loop", key=LOOP),
-            ],
-            [
                 sg.FilesBrowse(
                     button_text="Load MP3 files from disk",
                     file_types=(("MP3 files", "*.mp3"),),
                     initial_folder=application.Config.InitialMusicDirectory(),
                     enable_events=True,
                     key=EVENT_BROWSE_FILES),
-                sg.Input(
+            ],
+            [sg.Input(
                     default_text="Search Spotify...",
                     enable_events=True,
                     key=EVENT_SEARCH_STREAMING,
                     visible=False
-                )
+                )],
+            [
+                sg.Button(button_text="Play Song", key=EVENT_PLAY_SONG),
+                sg.Button(button_text="Delete Song", key=EVENT_DELETE_SONG),
+                sg.Button(button_text="STOP", key=EVENT_STOP)
             ],
+
             [sg.Text("Library")],
             [sg.Listbox(
                 values=[],
                 select_mode=sg.SELECT_MODE_MULTIPLE,
                 key=EVENT_SELECT_SONGS,
                 size=(100, 10), enable_events=True)],
+            [
+                sg.Button(button_text="Create Playlist", key=EVENT_CREATE_PLAYLIST),
+                sg.Button(button_text="Play Playlist", key=EVENT_PLAY_PLAYLIST),
+                sg.Button(button_text="Delete Playlist", key=EVENT_DELETE_PLAYLIST),
+            ],
             [sg.Text("Playlists")],
             [sg.Listbox(
                 values=[],
@@ -104,6 +96,10 @@ class PlayerGUI:
             self.handlers[e.EventName()] = e
 
     def Run(self):
+        """
+        Method for opening GUI and listening to user events.
+        :return:
+        """
         while True:
             event, values = self.window.read()
             shouldFinish = self.handleEvent(event, values)
@@ -118,27 +114,71 @@ class PlayerGUI:
         self.window[EVENT_BROWSE_FILES].update(visible=self.isLocalMode)
         self.window[EVENT_SEARCH_STREAMING].update(visible=not self.isLocalMode)
 
+        if self.isLocalMode:
+            self.updateLibrary()
+            self.updateLocalPlaylists()
+
+        else:
+            self.window[EVENT_SELECT_SONGS].update(values=[])
+            self.window[EVENT_SELECT_PLAYLIST].update(values=[])
+
     def handleEvent(self, event, values) -> bool:
+        """
+        Method for handling GUI events inside a loop (clicks, inputs, etc).
+        Returns boolean with meanings:
+        False - do not finish, continue to listen to events
+        True - end program execution
+
+        :param event:
+        :param values:
+        :return:
+        """
+
         if event == sg.WIN_CLOSED:
             return True
 
+        if event == EVENT_STOP:
+            self.handlers[event].Handle()
+            refund = self.pm.moneyZero()
+            skipped = self.App.GetSkippedSongs.Execute()
+
+            for s in skipped:
+                refund += getRefundCost(s.Cost())
+
+            self.pm.AddMoney(refund)
+            self.updateMoney()
+
         elif event == EVENT_PLAY_SONG:
-            if self.selectedSongs is None:
+            if len(self.selectedSongs) == 0:
                 return False
 
             songId = self.songIds[self.selectedSongs[0]]
             cost = self.getSongCostByID(songId)
+            if self.isLocalMode:
+                cost = getLocalCost(cost)
+            if values[LOOP]:
+                cost = getLoopCost(cost)
+
             self.pm.AddCredit(cost)
 
             self.updateMoney()
             self.handlers[event].Handle(songId, values[LOOP])
+
+        elif event == EVENT_DELETE_SONG:
+            if len(self.selectedSongs) == 0 or not self.isLocalMode:
+                return False
+
+            songId = self.songIds[self.selectedSongs[0]]
+
+            self.handlers[event].Handle(songId)
+            self.updateLibrary()
 
         elif event == EVENT_SELECT_SONGS:
             if len(values[event]) > 0:
                 self.selectedSongs = values[event]
 
         elif event == EVENT_CREATE_PLAYLIST:
-            if self.selectedSongs is None:
+            if len(self.selectedSongs) == 0:
                 return False
 
             name = sg.popup_get_text(
@@ -160,7 +200,27 @@ class PlayerGUI:
             self.selectedPlaylist = values[event][0]
 
         elif event == EVENT_PLAY_PLAYLIST:
+            if self.selectedPlaylist is None:
+                return False
+
+            cost = self.getPlaylistCostByName(self.selectedPlaylist)
+            if self.isLocalMode:
+                cost = getLocalCost(cost)
+            if values[LOOP]:
+                cost = getLoopCost(cost)
+
+            self.pm.AddCredit(cost)
+            self.updateMoney()
+
             self.handlers[event].Handle(self.selectedPlaylist, values[LOOP])
+
+        elif event == EVENT_DELETE_PLAYLIST:
+            if self.selectedPlaylist is None:
+                return False
+
+            self.handlers[event].Handle(self.selectedPlaylist)
+            self.updateLocalPlaylists()
+
         elif event == EVENT_INSERT_COIN:
             value = sg.popup_get_text(message="Coin value")
 
@@ -171,8 +231,6 @@ class PlayerGUI:
                 self.pm.AddCoin(coinsMap[value])
                 self.updateMoney()
 
-            return False
-
         elif event == EVENT_GET_CHANGE:
             if self.pm.SumIn().IsZero():
                 sg.Popup("No cash to get")
@@ -181,11 +239,8 @@ class PlayerGUI:
                 sg.Popup(", ".join([str(c.Value()) for c in change]))
                 self.updateMoney()
 
-            return False
-
         elif event == SWITCH:
             self.switchMode()
-            return False
 
         elif event == EVENT_SEARCH_STREAMING:
             search = values[EVENT_SEARCH_STREAMING]
@@ -200,7 +255,6 @@ class PlayerGUI:
                     self.searchResults[song.ID()] = song
 
                 self.window[EVENT_SELECT_SONGS].update(values=songTitles)
-            return False
 
         else:
             self.handlers[event].Handle(values[event])
@@ -239,3 +293,10 @@ class PlayerGUI:
 
     def getPlaylistCostByName(self, playlist: str) -> Money:
         return self.App.GetLocalPlaylists.Execute()[playlist].GetTotalCost()
+
+
+getLocalCost = lambda cost: Money(str(round(cost.Amount()/2, 2)), cost.Currency())
+
+getLoopCost = lambda cost: Money(str(round(cost.Amount()*Decimal(1.25), 2)), cost.Currency())
+
+getRefundCost = lambda cost: Money(str(round(cost.Amount()*Decimal(0.45), 2)), cost.Currency())

@@ -8,12 +8,16 @@ from src.internal.app.interfaces.query_handler import QueryHandler
 class Application:
     LoadSongs = CommandHandler()
     PlaySong = CommandHandler()
-    PlayLocalPlaylist = CommandHandler
+    PlayLocalPlaylist = CommandHandler()
     CreateLocalPlaylist = CommandHandler()
+    DeleteSong = CommandHandler()
+    DeletePlaylist = CommandHandler()
+    StopPlayback = CommandHandler()
 
     GetSongsInLibrary = QueryHandler()
     GetLocalPlaylists = QueryHandler()
     SearchStreaming = QueryHandler()
+    GetSkippedSongs = QueryHandler()
 
     Config = Configuration()
 

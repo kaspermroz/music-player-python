@@ -74,18 +74,21 @@ class PaymentsManager:
     def CoinsIn(self) -> List[Coin]:
         return self.coinsIn
 
+    def AddMoney(self, m: Money):
+        if self.credit > self.moneyZero():
+            if self.credit >= m:
+                self.credit -= m
+            else:
+                self.sumIn = m - self.credit
+                self.credit = self.moneyZero()
+        else:
+            self.sumIn += m
+
     def AddCoin(self, c: Coin):
         if c.Value().Currency() != self.currency:
             raise CurrencyMismatchError(self.currency, c.Value().Currency())
 
-        if self.credit > self.moneyZero():
-            if self.credit >= c.Value():
-                self.credit -= c.Value()
-            else:
-                self.sumIn = c.Value() - self.credit
-                self.credit = self.moneyZero()
-        else:
-            self.sumIn += c.Value()
+        self.AddMoney(c.Value())
 
     def AddCredit(self, amount: Money):
         if self.sumIn > self.moneyZero():
