@@ -6,6 +6,7 @@ from src.internal.app.app import Application
 class EventHandler(ABC):
     """
     Event Handler interface for PySimpleGUI events.
+    Used for implementation of classes executed as a response to all user actions
     """
 
     App: Application

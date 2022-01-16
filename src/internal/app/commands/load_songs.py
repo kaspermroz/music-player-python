@@ -4,6 +4,9 @@ from src.internal.domain.music.song import Song
 
 
 class LoadSongsHandler(CommandHandler):
+    """
+    Loads songs to library, takes songs as positional args
+    """
     library: Library
 
     def __init__(self, library: Library, **_kwargs):

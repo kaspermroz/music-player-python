@@ -6,6 +6,10 @@ from src.internal.adapters.local_player import LocalPlayer
 
 
 def BuildApplication() -> Application:
+    """
+    Returns application injected with all required dependencies.
+    :return:
+    """
     config = ServiceConfig()
     localPlayer = LocalPlayer()
     handlers = CommandHandlers(localPlayer)

@@ -1,3 +1,6 @@
+"""
+List of all application command handlers
+"""
 from typing import List, Type
 
 from src.internal.app.commands.load_songs import LoadSongsHandler

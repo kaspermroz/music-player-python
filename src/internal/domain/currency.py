@@ -1,4 +1,7 @@
 class Currency:
+    """
+    Simple currency domain model, holds value as string
+    """
     s: str
 
     def __init__(self, currency: str):

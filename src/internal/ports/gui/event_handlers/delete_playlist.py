@@ -3,6 +3,11 @@ from src.internal.ports.gui.events import EVENT_DELETE_PLAYLIST
 
 
 class DeletePlaylistHandler(EventHandler):
+    """
+    Executes when: User clicks on Delete playlist button
+    Functionality: Deletes local playlist by name from library
+    """
+
     def EventName(self) -> str:
         return EVENT_DELETE_PLAYLIST
 

@@ -3,6 +3,10 @@ from src.internal.ports.gui.events import EVENT_PLAY_PLAYLIST
 
 
 class PlayPlaylistHandler(EventHandler):
+    """
+    Executes when: User clicks Play playlist button
+    Functionality: Plays local playlist with optional loop
+    """
     def EventName(self) -> str:
         return EVENT_PLAY_PLAYLIST
 

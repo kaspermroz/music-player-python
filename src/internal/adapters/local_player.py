@@ -12,6 +12,10 @@ CONTINUOUS_LOOP = 1000000
 
 
 class LocalPlayer(Player):
+    """
+    Adapter for playing songs from your local drive.
+    Implements Player interface
+    """
     shouldStop: bool
     skippedSongs: List[Song]
     """
@@ -26,6 +30,12 @@ class LocalPlayer(Player):
         self.PlayPlaylistOnce(playlist, CONTINUOUS_LOOP)
 
     def PlayPlaylistOnce(self, playlist: Playlist, loops=1):
+        """
+        Uses multithreading to ensure non-blocking playback and enables stop functionality with refunds
+        :param playlist:
+        :param loops:
+        :return:
+        """
         self.skippedSongs = playlist.Songs()[1:]
 
         def play():

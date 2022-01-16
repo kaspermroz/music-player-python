@@ -1,3 +1,6 @@
+"""
+List of all application query handlers
+"""
 from typing import List, Type
 
 from src.internal.app.interfaces.query_handler import QueryHandler

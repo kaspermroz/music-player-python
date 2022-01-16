@@ -1,3 +1,4 @@
+"""Possible user action events"""
 EVENT_BROWSE_FILES = "BrowseFiles"
 EVENT_DELETE_SONG = "DeleteSong"
 EVENT_PLAY_SONG = "PlaySong"

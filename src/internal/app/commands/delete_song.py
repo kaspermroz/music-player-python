@@ -3,6 +3,9 @@ from src.internal.domain.music.library import Library
 
 
 class DeleteSongHandler(CommandHandler):
+    """
+    Deletes local song by ID
+    """
     library: Library
 
     def __init__(self, library: Library, **_kwargs):

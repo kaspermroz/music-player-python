@@ -7,6 +7,11 @@ from src.internal.domain.music.library import Library
 
 
 def QueryHandlers(local_player) -> List[QueryHandler]:
+    """
+    Injects application queries, used for getting application state
+    :param local_player:
+    :return:
+    """
     queryHandlers: List[QueryHandler] = []
     queryDeps = {
         "library": Library(),

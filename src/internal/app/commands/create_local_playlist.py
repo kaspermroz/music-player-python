@@ -7,6 +7,9 @@ from src.internal.domain.music.playlist import Playlist
 
 
 class CreateLocalPlaylistHandler(CommandHandler):
+    """
+    Creates local playlists, takes name and local songs to associate with playlist as arguments
+    """
     library: Library
 
     def __init__(self, library: Library, **_kwargs):

@@ -9,6 +9,7 @@ class Library(metaclass=Singleton):
     """
     Library is used for storing songs available to be added to playlist or played individually.
     User is limited to one library with multiple playlists.
+    Uses singleton as metaclass to ensure deduplication and coherence of state.
     """
 
     songs: Dict[str, Song]

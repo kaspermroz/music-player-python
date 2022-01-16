@@ -6,6 +6,10 @@ from src.internal.app.interfaces.query_handler import QueryHandler
 
 
 class Application:
+    """
+    Application implementation - holds application commands, queries and config.
+    Core of all business logic and center of dependency graph
+    """
     LoadSongs = CommandHandler()
     PlaySong = CommandHandler()
     PlayLocalPlaylist = CommandHandler()

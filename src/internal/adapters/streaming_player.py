@@ -3,7 +3,6 @@ from random import triangular
 from webbrowser import open as wopen
 from spotipy import SpotifyClientCredentials, Spotify
 
-
 from src.internal.app.interfaces.player import Player
 from src.internal.domain.music.song import Song
 from src.internal.domain.music.playlist import Playlist
@@ -12,6 +11,11 @@ from src.internal.domain.currency import PLN
 
 
 class StreamingPlayer(Player):
+    """
+    Adapter for playing songs from Spotify
+    Implements Player interface
+    """
+
     def __init__(self):
         self.spotify = Spotify(client_credentials_manager=SpotifyClientCredentials())
 
