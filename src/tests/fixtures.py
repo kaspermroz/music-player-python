@@ -16,4 +16,4 @@ def SomeLocalSong(song_id="local") -> Song:
 
 
 def SomeStreamingSong(song_id="streaming") -> Song:
-    return Song(song_id, "streaming", "str", 1337, SomeMoney(), "spotify:track:test")
+    return Song(song_id, "streaming", "str", 1337, SomeMoney(), "http:track:test")
